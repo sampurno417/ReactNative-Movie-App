@@ -1,12 +1,14 @@
-import {Image, ScrollView, Text, View} from 'react-native';
-import {Link} from "expo-router";
+import {ActivityIndicator, FlatList, Image, ScrollView, Text, View} from 'react-native';
 import {images} from "@/constants/images";
 import {icons} from "@/constants/icons";
 import SearchBar from "@/components/SearchBar";
 import {useRouter} from "expo-router";
+import useFetch from "@/services/useFetch";
+import {fetchMovies} from "@/services/api";
 
 export default function Index() {
     const router = useRouter();
+    const {data : movies , error: moviesError , loading: moviesLoading} = useFetch(() => fetchMovies({query: ''}));
 
     return (
         <View className=" flex-1 bg-primary">
@@ -16,14 +18,36 @@ export default function Index() {
                         contentContainerStyle={{flexGrow: 1 , paddingBottom: 10}}>
                 <Image source={icons.logo} className="mx-auto mt-20 w-12 h-10 mb-5" />
 
-                <View className="flex-1 mt-5">
-                    <SearchBar
-
-                        onPress={() => router.push("/search")}
-                        placeholder="Search for a Movie"
-
+                {moviesLoading?(
+                    <ActivityIndicator
+                        size="large"
+                        color="#0000ff"
+                        className="mt-10 self-center"
                     />
-                </View>
+                ) : moviesError ? (
+                    <Text className="text-white text-center">Error: {moviesError?.message} </Text>
+                ) : (
+                    <View className="flex-1 mt-5">
+                        <SearchBar
+
+                            onPress={() => router.push("/search")}
+                            placeholder="Search for a Movie"
+
+                        />
+
+                        <>
+                            <Text className="text-lg text-white font-bold mt-5 mb-3">Latest Movies</Text>
+
+                            <FlatList
+                                data={movies}
+                                renderItem={({item}) => (
+                                    <Text className="text-white text-sm">{item.title}</Text>
+                                )}
+                            />
+                        </>
+
+                    </View>
+                )}
 
             </ScrollView>
 
