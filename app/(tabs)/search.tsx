@@ -7,11 +7,12 @@ import MovieCard from "@/components/MovieCard";
 import {icons} from "@/constants/icons";
 import SearchBar from "@/components/SearchBar";
 import {func} from "ts-interface-checker";
+import {updateSearchCount} from "@/services/appwrite";
 
 const search = () => {
 
    const [searchQuery, setSearchQuery] = useState('');
-    const {data : movies , error: moviesError , loading: moviesLoading, reFetch, reset} = useFetch(() => fetchMovies({query: searchQuery}),false);
+    const {data : movies , error: moviesError , loading: moviesLoading, reFetch, reset} = useFetch(() => fetchMovies({query: searchQuery}), false);
     // const handleSearch = async (text: string) => {
     //     setSearchQuery(text);
     //     if (text.trim()) {
@@ -23,7 +24,11 @@ const search = () => {
         const timeoutId = setTimeout (async () => {
             if (searchQuery.trim()) {
                 reFetch();
-            } else {
+            }
+            if (searchQuery.trim() && movies && movies.length > 0) {
+                updateSearchCount(searchQuery, movies[0]);
+            }
+            else {
                 reset();
             }
         }, 500);
