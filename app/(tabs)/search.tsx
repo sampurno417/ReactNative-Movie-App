@@ -27,9 +27,7 @@ const search = () => {
             if (searchQuery.trim()) {
                 reFetch();
             }
-            if (searchQuery.trim() && movies && movies.length > 0) {
-                updateSearchCount(searchQuery, movies[0]);
-            }
+
             else {
                 reset();
             }
@@ -37,6 +35,14 @@ const search = () => {
         return () => clearTimeout(timeoutId);
 
     }, [searchQuery]);
+
+    useEffect(() => {
+
+        if (searchQuery.trim() && movies && movies.length > 0) {
+            updateSearchCount(searchQuery, movies[0]);
+        }
+
+    }, [movies]);
 
     useFocusEffect(
         React.useCallback(() => {
