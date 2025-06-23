@@ -1,5 +1,5 @@
-import {ActivityIndicator, FlatList, Image, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {ActivityIndicator, FlatList, Image, StyleSheet, Text, TextInput, View} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
 import {images} from "@/constants/images";
 import useFetch from "@/services/useFetch";
 import {fetchMovies} from "@/services/api";
@@ -8,6 +8,7 @@ import {icons} from "@/constants/icons";
 import SearchBar from "@/components/SearchBar";
 import {func} from "ts-interface-checker";
 import {updateSearchCount} from "@/services/appwrite";
+import {useFocusEffect} from "expo-router";
 
 const search = () => {
 
@@ -19,6 +20,7 @@ const search = () => {
     //         await reFetch(); // ✅ handles the promise correctly
     //     }
     // };
+    const inputRef = useRef<TextInput>(null); // ✅ ref to the input
 
     useEffect(() => {
         const timeoutId = setTimeout (async () => {
@@ -35,6 +37,16 @@ const search = () => {
         return () => clearTimeout(timeoutId);
 
     }, [searchQuery]);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const timeout = setTimeout(() => {
+                inputRef.current?.focus();
+            }, 300); // small delay for keyboard smoothness
+
+            return () => clearTimeout(timeout);
+        }, [])
+    );
 
 
     return (
@@ -64,6 +76,7 @@ const search = () => {
                                 value={searchQuery}
                                 onChangeText={(text: string) => setSearchQuery(text)}
                                 //     onChangeText={handleSearch}
+                                           inputRef={inputRef} // ✅ pass ref
                                 />
                             </View>
                             {moviesLoading &&(
