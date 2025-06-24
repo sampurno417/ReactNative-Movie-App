@@ -7,6 +7,7 @@ import useFetch from "@/services/useFetch";
 import {fetchMovies} from "@/services/api";
 import MovieCard from "@/components/MovieCard";
 import {getTrendingMovies} from "@/services/appwrite";
+import TrendingCard from "@/components/TrendingCard";
 
 export default function Index() {
     const router = useRouter();
@@ -37,7 +38,7 @@ export default function Index() {
                 ) : (
                     <View className="flex-1 mt-5">
 
-
+                        <>
                             <SearchBar
 
                                 onPress={() => router.push("/search")}
@@ -49,13 +50,18 @@ export default function Index() {
                             <View className= "mt-10">
 
                                 <Text className="text-lg text-white font-bold mb-3">Trending Movies</Text>
-                                
+
                                 <FlatList
                                     className="mb-4 mt-3"
+                                    horizontal
+                                    showsHorizontalScrollIndicator = {false}
+                                    ItemSeparatorComponent = {() => <View
+                                        className="w-4"
+                                    />}
                                     data={trendingMovies} renderItem={({item, index}) =>(
-                                    <Text className="text-white text-sm">
-                                        {item.title}
-                                    </Text>
+                                    <TrendingCard
+                                        movie={item} index={index}
+                                    />
                                 )}
                                     keyExtractor={(item) => item.movie_id.toString()}
                                           />
@@ -63,10 +69,11 @@ export default function Index() {
                             </View>
                         )}
 
-                        <>
+
                             <Text className="text-lg text-white font-bold mt-5 mb-3">Latest Movies</Text>
 
                             <FlatList
+
                                 data={movies}
                                 renderItem={({item}) => (
                                     <MovieCard
