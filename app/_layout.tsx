@@ -11,8 +11,11 @@ export default function RootLayout() {
       options={{ headerShown: false }}
   />
     <Stack.Screen
-      name= "/movies/[id]"
-      options={{ headerShown: false }}
+      name= "movies/[id]"
+      options={{ headerShown: false ,
+        presentation: "card"
+    }}
+
       />
   </Stack>
 </>
