@@ -26,6 +26,7 @@ const TabIcon = ({ focused, icon, title } : any ) =>{
 
 const _layout = () => {
   return (
+
     <Tabs
 
         screenOptions={{
@@ -46,6 +47,7 @@ const _layout = () => {
                 overflow: "hidden",
                 borderWidth: 1,
                 borderColor: "#0f0d23",
+                display: "none"
             }
         }}
 
@@ -104,10 +106,11 @@ const _layout = () => {
                 )
             }}
         />
+
     </Tabs>
-  );
+    );
 };
 
 export default _layout;
 
-const styles = StyleSheet.create({});
+{/*const styles = StyleSheet.create({});*/}
