@@ -4,6 +4,7 @@ import useFetch from "@/services/useFetch";
 import {fetchMovieDetails} from "@/services/api";
 import {router, useLocalSearchParams, useNavigation} from "expo-router";
 import {icons} from "@/constants/icons";
+import {getStreamingLink} from "@/services/fmovies";
 
 interface MovieInfoProps {
     label: string;
@@ -40,6 +41,29 @@ const MovieDetails = () => {
       <ScrollView contentContainerStyle={{paddingBottom: 80}}>
           <View>
               <Image source={{uri: `https://image.tmdb.org/t/p/w500${movie?.poster_path}`}} className="w-full h-[550px] items-center  " resizeMode="stretch"/>
+
+              <View className="items-center mt-4">
+                  <TouchableOpacity
+                      onPress={async () => {
+                          if (!movie?.title) return;
+                          const streamUrl = await getStreamingLink(movie.title, movie.release_date?.split("-")[0]);
+                          if (streamUrl) {
+                              router.push({
+                                  pathname: "/play",
+                                  params: { streamUrl }
+                              });
+                          } else {
+                              alert("No stream link found.");
+                          }
+                      }}
+                      className="bg-accent px-5 py-3 rounded-full flex-row items-center"
+                  >
+                      <Image source={icons.play} className="w-5 h-5 mr-2" tintColor="white" />
+                      <Text className="text-white text-base font-semibold">Play Movie</Text>
+                  </TouchableOpacity>
+              </View>
+
+
           </View>
           <View className= "flex-col  justify-center mt-5 px-5">
 
