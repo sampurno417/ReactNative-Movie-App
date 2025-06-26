@@ -20,6 +20,14 @@ export default function RootLayout() {
     }}
 
       />
+
+    <Stack.Screen
+        name= "movies/play"
+        options={{ headerShown: false ,
+          presentation: "card"
+        }}
+
+    />
   </Stack>
 </>
 )}

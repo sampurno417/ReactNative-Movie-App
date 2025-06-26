@@ -64,20 +64,26 @@ const MovieDetails = () => {
                           }
                           console.log("✅ Torrent URL:", torrentUrl);
 
-                          console.log("🔁 Converting to magnet...");
-                          const magnet = await torrentUrlToMagnet(torrentUrl);
-                          if (!magnet) {
+                          console.log("🔁 Converting to magnet via backend...");
+                          const magnetRes = await fetch(`https://tor-stream-api.onrender.com/magnet?torrent=${encodeURIComponent(torrentUrl)}`);
+                          const magnetJson = await magnetRes.json();
+                          const magnet = magnetJson.magnet;
+
+                          if (!magnet || magnet === "magnet:?") {
                               alert("❌ Failed to convert to magnet link.");
                               return;
                           }
+
                           console.log("✅ Magnet:", magnet);
 
                           router.push({
                               pathname: "/movies/play",
                               params: { magnet: encodeURIComponent(magnet) }
                           });
+
                           console.log("🚀 Navigated to play screen");
                       }}
+
 
 
                       className="bg-accent px-5 py-3 rounded-full flex-row items-center"
