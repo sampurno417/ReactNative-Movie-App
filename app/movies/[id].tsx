@@ -1,7 +1,7 @@
 import {Image, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useLayoutEffect} from 'react';
 import useFetch from "@/services/useFetch";
-import {fetchMovieDetails} from "@/services/api";
+import {fetchMovieDetails, fetchYtsTorrent} from "@/services/api";
 import {router, useLocalSearchParams, useNavigation} from "expo-router";
 import {icons} from "@/constants/icons";
 import {getStreamingLink} from "@/services/fmovies";
@@ -22,6 +22,10 @@ const MovieInfo = ({ label, value }: MovieInfoProps) => (
 
     </View>
 )
+
+async function torrentUrlToMagnet(torrentUrl: any) {
+    
+}
 
 const MovieDetails = () => {
 
@@ -45,17 +49,37 @@ const MovieDetails = () => {
               <View className="items-center mt-4">
                   <TouchableOpacity
                       onPress={async () => {
-                          if (!movie?.title) return;
-                          const streamUrl = await getStreamingLink(movie.title, movie.release_date?.split("-")[0]);
-                          if (streamUrl) {
-                              router.push({
-                                  pathname: "/play",
-                                  params: { streamUrl }
-                              });
-                          } else {
-                              alert("No stream link found.");
+                          console.log("▶️ Play button tapped");
+
+                          if (!movie?.title) {
+                              console.warn("⚠️ No movie title found");
+                              return;
                           }
+
+                          console.log("🔍 Fetching torrent URL for:", movie.title);
+                          const torrentUrl = await fetchYtsTorrent(movie.title, movie.release_date?.split("-")[0]);
+                          if (!torrentUrl) {
+                              alert("❌ No torrent found.");
+                              return;
+                          }
+                          console.log("✅ Torrent URL:", torrentUrl);
+
+                          console.log("🔁 Converting to magnet...");
+                          const magnet = await torrentUrlToMagnet(torrentUrl);
+                          if (!magnet) {
+                              alert("❌ Failed to convert to magnet link.");
+                              return;
+                          }
+                          console.log("✅ Magnet:", magnet);
+
+                          router.push({
+                              pathname: "/movies/play",
+                              params: { magnet: encodeURIComponent(magnet) }
+                          });
+                          console.log("🚀 Navigated to play screen");
                       }}
+
+
                       className="bg-accent px-5 py-3 rounded-full flex-row items-center"
                   >
                       <Image source={icons.play} className="w-5 h-5 mr-2" tintColor="white" />

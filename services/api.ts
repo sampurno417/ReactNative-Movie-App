@@ -42,4 +42,26 @@ export const fetchMovieDetails = async (movieId: string) : Promise<MovieDetails>
         console.log(error);
         throw error;
     }
+
+
 }
+export async function fetchYtsTorrent(title: string) {
+    console.log("🌐 Searching YTS for:", title);
+
+    try {
+        const res = await fetch(`https://tor-stream-api.onrender.com/yts?title=${encodeURIComponent(title)}`);
+        const json = await res.json();
+
+        if (!json?.data?.movies?.[0]?.torrents?.[0]?.url) {
+            console.warn("⚠️ No torrent found for:", title);
+            return null;
+        }
+
+        return json.data.movies[0].torrents[0].url; // .torrent file URL
+    } catch (error) {
+        console.error("❌ fetchYtsTorrent failed:", error);
+        return null;
+    }
+}
+
+

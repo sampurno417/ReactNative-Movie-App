@@ -1,6 +1,9 @@
 import { Stack } from "expo-router";
 import "./global.css";
 import {StatusBar} from "react-native";
+import { Buffer } from "buffer";
+global.Buffer = global.Buffer || Buffer;
+
 export default function RootLayout() {
   return(
 <>
